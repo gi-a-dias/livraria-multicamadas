@@ -1,6 +1,4 @@
-### 📄 README.md — Exercício 7.3 (Arquitetura Multicamadas)
 
-```markdown
 # Livraria - Arquitetura Multicamadas (Lab 7.3)
 
 Evolução da aplicação da livraria estruturada em **pelo menos 4 camadas** bem definidas, garantindo a separação de responsabilidades e a adição de uma nova funcionalidade de negócio.
