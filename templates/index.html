@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Livraria - MVC</title>
+</head>
+<body>
+    <h1>Catálogo da Livraria</h1>
+
+    <!-- Formulário de Filtro (Front-end funcional) -->
+    <form method="GET" action="/">
+        <label>Filtrar por Gênero:</label>
+        <input type="text" name="genero" value="{{ genero if genero else '' }}" placeholder="Ex: Fantasia">
+        <button type="submit">Filtrar</button>
+        <a href="/">Limpar</a>
+    </form>
+
+    <hr>
+
+    <!-- Lista de Livros -->
+    <ul>
+        {% for livro in livros %}
+            <li><strong>{{ livro.titulo }}</strong> - Gênero: {{ livro.genero }} - R$ {{ livro.preco }} (Estoque: {{ livro.estoque }})</li>
+        {% else %}
+            <p>Nenhum livro encontrado.</p>
+        {% endfor %}
+    </ul>
+</body>
+</html>
