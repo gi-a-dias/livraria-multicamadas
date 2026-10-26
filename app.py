@@ -1,18 +1,16 @@
-from flask import Flask, render_template, request
-from services.livraria_service import listar_catalogo, adicionar_aos_favoritos
+from flask import Flask
+from presentation.routes import livraria_bp
 
-app = Flask(__name__)
 
-@app.route('/')
-def index():
-    livros = listar_catalogo()
-    return render_template('index.html', livros=livros)
+def create_app():
+    """Factory da aplicação Flask."""
+    app = Flask(__name__)
+    app.config["SECRET_KEY"] = "chave-local-para-desenvolvimento"
+    app.register_blueprint(livraria_bp)
+    return app
 
-@app.route('/favoritar/<int:livro_id>')
-def favoritar(livro_id):
-    mensagem = adicionar_aos_favoritos(livro_id)
-    livros = listar_catalogo()
-    return render_template('index.html', livros=livros, mensagem=mensagem)
 
-if __name__ == '__main__':
+app = create_app()
+
+if __name__ == "__main__":
     app.run(debug=True)

@@ -1,29 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Livraria - MVC</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Livraria Multicamadas</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .mensagem { padding: .7rem; margin: .5rem 0; background: #eef7ee; }
+        .erro { background: #fdecec; }
+        li { margin: .7rem 0; }
+        form { display: inline; }
+        button { cursor: pointer; }
+        section { margin: 1.5rem 0; }
+    </style>
 </head>
 <body>
     <h1>Catálogo da Livraria</h1>
 
-    <!-- Formulário de Filtro (Front-end funcional) -->
-    <form method="GET" action="/">
-        <label>Filtrar por Gênero:</label>
-        <input type="text" name="genero" value="{{ genero if genero else '' }}" placeholder="Ex: Fantasia">
-        <button type="submit">Filtrar</button>
-        <a href="/">Limpar</a>
-    </form>
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% for categoria, mensagem in mensagens %}
+        <p class="mensagem {{ 'erro' if categoria == 'erro' else '' }}">{{ mensagem }}</p>
+      {% endfor %}
+    {% endwith %}
 
-    <hr>
+    <section>
+        <h2>Buscar livros</h2>
+        <form method="get" action="{{ url_for('livraria.index') }}">
+            <label for="genero">Filtrar por gênero:</label>
+            <input id="genero" name="genero" value="{{ genero }}" placeholder="Ex.: Fantasia">
+            <button type="submit">Filtrar</button>
+            <a href="{{ url_for('livraria.index') }}">Limpar</a>
+        </form>
+    </section>
 
-    <!-- Lista de Livros -->
-    <ul>
+    <section>
+        <h2>Catálogo</h2>
+        <ul>
         {% for livro in livros %}
-            <li><strong>{{ livro.titulo }}</strong> - Gênero: {{ livro.genero }} - R$ {{ livro.preco }} (Estoque: {{ livro.estoque }})</li>
+            <li>
+                <strong>{{ livro.titulo }}</strong> — {{ livro.genero }} —
+                R$ {{ "%.2f"|format(livro.preco) }} (Estoque: {{ livro.estoque }})
+                {% if livro.id in ids_favoritos %}
+                    <strong>★ Favorito</strong>
+                    <form method="post" action="{{ url_for('livraria.remover_favorito', livro_id=livro.id) }}">
+                        <input type="hidden" name="genero" value="{{ genero }}">
+                        <button type="submit">Remover dos favoritos</button>
+                    </form>
+                {% else %}
+                    <form method="post" action="{{ url_for('livraria.adicionar_favorito', livro_id=livro.id) }}">
+                        <input type="hidden" name="genero" value="{{ genero }}">
+                        <button type="submit">Adicionar aos favoritos</button>
+                    </form>
+                {% endif %}
+            </li>
         {% else %}
-            <p>Nenhum livro encontrado.</p>
+            <li>Nenhum livro encontrado para esse filtro.</li>
         {% endfor %}
-    </ul>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Meus favoritos</h2>
+        {% if favoritos %}
+            <ul>
+            {% for livro in favoritos %}
+                <li>{{ livro.titulo }} — {{ livro.genero }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Você ainda não adicionou livros aos favoritos.</p>
+        {% endif %}
+    </section>
 </body>
 </html>
